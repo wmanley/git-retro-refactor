@@ -74,6 +74,7 @@ def main(argv: "list[str]"):
 
     call([
         'git', 'update-ref', '-m', 'retro-refactor', newref, oldref])
+    os.environ["FILTER_BRANCH_SQUELCH_WARNING"] = "1"
     call([
         'git', 'filter-branch', '-f',
         '--tree-filter', tree_filter,
