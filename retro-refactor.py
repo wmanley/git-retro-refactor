@@ -1,11 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import argparse
+import os
 import sys
-import shlex
 from pipes import quote
 from subprocess import check_call, check_output
 from textwrap import dedent
+
 
 def replacements(x):
     if len(x) % 2 != 0:
@@ -13,12 +14,13 @@ def replacements(x):
     try:
         i = iter(x)
         while True:
-            yield (i.next(), i.next())
+            yield (next(i), next(i))
     except StopIteration:
         return
 
-def main(argv):
-    head = check_output(['git', 'symbolic-ref', 'HEAD']).strip()
+
+def main(argv: "list[str]"):
+    head = check_output(['git', 'symbolic-ref', 'HEAD']).strip().decode()
     if not head.startswith('refs/heads/'):
         sys.stderr.write("ERROR: Detatched head")
         return 1
@@ -50,7 +52,7 @@ def main(argv):
         grep_cmdline += ['-e', a]
     sed_cmds = []
     for a, b in r:
-        sed_cmds += ['-e', 's/%s/%s/g' % (a.replace('/', '\/'), b.replace('/', '\/'))]
+        sed_cmds += ['-e', 's/%s/%s/g' % (a.replace('/', r'\/'), b.replace('/', r'\/'))]
     sed_quoted = ' '.join([quote(x) for x in sed_cmds])
 
     rename_cmd = dedent("""\
